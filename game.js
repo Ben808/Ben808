@@ -2,7 +2,7 @@ import Phaser from 'https://codepen.io/libe2022/pen/poWbMod.js'
 import Carrot from 'https://codepen.io/libe2022/pen/vYJWqBx.js'
 
 export default class Game extends Phaser.Scene {
-  carrotsCollected = 0
+  cakesCollected = 0
 	/** @type {Phaser.Types.Input.Keyboard.CursorKeys} */
 	cursors
 
@@ -86,7 +86,7 @@ export default class Game extends Phaser.Scene {
     	this.cameras.main.setDeadzone(this.scale.width * 1.5);
     
       const style = {color: '#000', fontSize: 24}
-      this.carrotsCollectedText = this.add.text(240, 10, 'Carrots: 0', style)
+      this.cakesCollectedText = this.add.text(240, 10, 'Cakes: 0', style)
       .setScrollFactor(0) 
        .setOrigin(0.5, 0) 
   
@@ -180,10 +180,10 @@ export default class Game extends Phaser.Scene {
     
     	this.physics.world.disableBody(carrot.body);
       
-      this.carrotsCollected++
+      this.cakesCollected++
     
-    const value = `Carrots: ${this.carrotsCollected}`
-    this.carrotsCollectedText.text = value
+    const value = `Cakes: ${this.cakesCollected}`
+    this.cakesCollectedText.text = value
     
 	}
 }
