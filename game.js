@@ -22,7 +22,10 @@ export default class Game extends Phaser.Scene {
       "https://raw.githubusercontent.com/Ben808/Ultimate-game-/main"
     );
     //background image
-    this.load.image("background", "Assets/bg_layer1.png");
+    this.load.image(
+      "background",
+      "Assets/Screen%20Shot%202022-03-03%20at%2012.02.40%20PM.png"
+    );
     //platforms
     this.load.image("platform", "Assets/ground_grass.png");
     //bunny standing still
@@ -47,7 +50,7 @@ export default class Game extends Phaser.Scene {
       rate: 1,
       detune: 0,
       seek: 0,
-      loop: true,
+      loop: false,
       delay: 0
     });
     this.add.image(240, 320, "background").setScrollFactor(1, 0);
