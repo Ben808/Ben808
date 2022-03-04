@@ -53,7 +53,7 @@ export default class Game extends Phaser.Scene {
       loop: false,
       delay: 0
     });
-    this.add.image(240, 320, "background").setScrollFactor(1, 0);
+    this.add.image(240, 25, "background").setScrollFactor(15, 0);
 
     //creates group of platforms locked in place
     this.platforms = this.physics.add.staticGroup();
