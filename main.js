@@ -5,8 +5,8 @@ import GameOver from 'https://codepen.io/libe2022/pen/ZEaMerJ.js'
 export default new Phaser.Game({
 	type: Phaser.AUTO,
 	//makes it 480x640 aspect ratio or vertical
-	width: 480,
-	height: 640,
+	width: 600,
+	height: 630,
 	//scenes used so whatever I want to show
 	scene: [Game, GameOver],
 	//physics engine using arcade, gravity being 200
