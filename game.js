@@ -141,6 +141,7 @@ export default class Game extends Phaser.Scene {
 
     const bottomPlatform = this.findBottomMostPlatform();
     if (this.player.y > bottomPlatform.y + 200) {
+      this.themeSound.stop();
       this.scene.start("game-over");
     }
   }
