@@ -17,6 +17,9 @@ export default class Game extends Phaser.Scene {
   }
 
   preload() {
+    this.gameWidth = this.sys.game.canvas.width;
+    this.gameHeight = this.sys.game.canvas.height;
+
     //base url of mr. nolan's github with all the stuff we use
     this.load.setBaseURL(
       "https://raw.githubusercontent.com/Ben808/Ultimate-game-/main"
@@ -50,28 +53,35 @@ export default class Game extends Phaser.Scene {
       rate: 1,
       detune: 0,
       seek: 0,
-      loop: false,
+      loop: true,
       delay: 0
     });
     this.add.image(240, 25, "background").setScrollFactor(15, 0);
 
     //creates group of platforms locked in place
-    this.platforms = this.physics.add.staticGroup();
+
+    this.platforms = this.physics.add.group({ allowGravity: false });
+    //Phaser.Physics.Arcade.World.disable(platforms);
 
     for (let i = 0; i < 5; i++) {
       const x = Phaser.Math.Between(80, 400);
       const y = 150 * i;
-
       /** @type {Phaser.Physics.Arcade.Sprite} */
       const platform = this.platforms.create(x, y, "platform");
-      platform.scale = 0.5;
+      platform.x = x;
+      platform.y = y;
+      console.log(x);
 
-      /** @type {Phaser.Physics.Arcade.Sprite} */
+      platform.scale = 0.5;
+      platform.setImmovable(true);
+
       const body = platform.body;
       body.updateFromGameObject();
+      console.log(platform);
+      this.setPlatformMovementBounds(platform);
+      //this.platformMoveInit(platform);
     }
 
-    //bunny sprite with scale 0.5
     this.player = this.physics.add.sprite(240, 320, "elephant").setScale(0.5);
 
     //bunny stops on platform now with collider
@@ -82,7 +92,6 @@ export default class Game extends Phaser.Scene {
     this.player.body.checkCollision.left = false;
     this.player.body.checkCollision.right = false;
 
-    //camera
     this.cameras.main.startFollow(this.player);
 
     //deadzone so it doesn't keep moving
@@ -112,12 +121,22 @@ export default class Game extends Phaser.Scene {
     this.platforms.children.iterate((child) => {
       /** @type {Phaser.Physics.Arcade.Sprite} */
       const platform = child;
-
+      this.platformUpdate(platform);
       const scrollY = this.cameras.main.scrollY;
+      //console.log(platform.y)
       if (platform.y >= scrollY + 700) {
-        platform.y = scrollY - Phaser.Math.Between(50, 75);
-        platform.body.updateFromGameObject();
+        //platform.y = scrollY - Phaser.Math.Between(50, 75);
+        //platform.body.updateFromGameObject();
+        platform.setPosition(
+          Phaser.Math.Between(50, 400),
+          scrollY - Phaser.Math.Between(50, 75)
+        );
+        //platform.body.updateFromGameObject();
+        this.platformMoveInit(platform);
+        console.log(platform);
+
         this.addCarrotAbove(platform);
+        console.log(platform.x);
       }
     });
     //variable that is for when the player touches something below them
@@ -144,8 +163,10 @@ export default class Game extends Phaser.Scene {
       this.themeSound.stop();
       this.scene.start("game-over");
     }
-  }
 
+    // update difficulty scale based on point value
+    this.difficultyscale = 1 + ~~(this.carrotsCollected / 25);
+  }
   /**
    *
    * @param {Phaser.GameObjects.Sprite} sprite
@@ -213,5 +234,52 @@ export default class Game extends Phaser.Scene {
     }
 
     return bottomPlatform;
+  }
+  setPlatformMovementBounds(platform) {
+    let split = Phaser.Math.Between(0, this.gameWidth);
+    platform.boundLeft = Phaser.Math.Between(0, split);
+    platform.boundRight = Phaser.Math.Between(split, this.gameWidth);
+    platform.rate = Phaser.Math.Between(20, 100);
+    platform.direction = 1;
+    //platform.direction=Phaser.Math.Between(0,1)
+  }
+
+  platformMoveInit(platform) {
+    if (platform.direction) {
+      this.physics.moveTo(
+        platform,
+        platform.boundRight,
+        platform.y,
+        platform.rate
+      );
+    } else {
+      this.physics.moveTo(
+        platform,
+        platform.boundLeft,
+        platform.y,
+        platform.rate
+      );
+    }
+  }
+
+  platformUpdate(platform) {
+    //console.log(platform);
+    if (platform.direction && platform.x >= platform.boundRight) {
+      this.physics.moveTo(
+        platform,
+        platform.boundLeft,
+        platform.y,
+        platform.rate
+      );
+      platform.direction = 0;
+    } else if (!platform.direction && platform.x <= platform.boundLeft) {
+      this.physics.moveTo(
+        platform,
+        platform.boundRight,
+        platform.y,
+        platform.rate
+      );
+      platform.direction = 1;
+    }
   }
 }
