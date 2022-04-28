@@ -45,6 +45,9 @@ export default class Game extends Phaser.Scene {
   }
 
   create() {
+    this.difficultyScale = 1;
+    this.cakesCollected = 0;
+
     this.themeSound = this.sound.add("theme");
 
     this.themeSound.play({
@@ -165,7 +168,7 @@ export default class Game extends Phaser.Scene {
     }
 
     // update difficulty scale based on point value
-    this.difficultyscale = 1 + ~~(this.carrotsCollected / 25);
+    this.difficultyscale = 1 + ~~(this.cakesCollected / 5) / 10;
   }
   /**
    *
@@ -241,7 +244,7 @@ export default class Game extends Phaser.Scene {
     platform.boundRight = Phaser.Math.Between(split, this.gameWidth);
     platform.rate = Phaser.Math.Between(20, 100);
     platform.direction = 1;
-    //platform.direction=Phaser.Math.Between(0,1)
+    platform.direction = Phaser.Math.Between(0, 1);
   }
 
   platformMoveInit(platform) {
@@ -269,7 +272,7 @@ export default class Game extends Phaser.Scene {
         platform,
         platform.boundLeft,
         platform.y,
-        platform.rate
+        platform.rate * this.difficultyscale
       );
       platform.direction = 0;
     } else if (!platform.direction && platform.x <= platform.boundLeft) {
@@ -277,7 +280,7 @@ export default class Game extends Phaser.Scene {
         platform,
         platform.boundRight,
         platform.y,
-        platform.rate
+        platform.rate * this.difficultyscale
       );
       platform.direction = 1;
     }
